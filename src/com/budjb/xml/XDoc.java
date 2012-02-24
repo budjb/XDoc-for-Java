@@ -34,11 +34,10 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.*;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -2477,12 +2476,15 @@ public class XDoc implements Cloneable
 			return empty;
 		}
 		
+		// Clean up the input string
+		xml = xml.trim().replaceFirst("^([\\W]+)<","<");
+
 	    // Parse the input xml
 		Document doc = null;
 		try {
-			doc = dBuilder.parse(new InputSource(new StringReader(xml)));
-		}
-		catch (SAXException | IOException e) {
+			doc = dBuilder.parse(new ByteArrayInputStream(xml.getBytes()));
+		} catch (SAXException | IOException e) {
+			e.printStackTrace();
 			return empty;
 		}
 
